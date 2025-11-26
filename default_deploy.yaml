@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: insurance-api
+  labels:
+    app: insurance-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: insurance-api
+  template:
+    metadata:
+      labels:
+        app: insurance-api
+    spec:
+      containers:
+        - name: api
+          image: priteeagrawal2006/insurance-premium-api:latest
+          ports:
+            - containerPort: 8080   # changed from 8000 → 8080
+          env:
+            - name: ENV
+              value: "default"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: insurance-api-svc
+  labels:
+    app: insurance-api
+spec:
+  selector:
+    app: insurance-api
+  type: NodePort
+  ports:
+    - port: 8080           # Service port changed from 8000 → 8080
+      targetPort: 8080     # matches the container port above
+      nodePort: 30081      # different from 30080 in the insurance namespace

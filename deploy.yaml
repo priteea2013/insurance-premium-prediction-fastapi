@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: insurance
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: insurance-api
+  namespace: insurance
+  labels:
+    app: insurance-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: insurance-api
+  template:
+    metadata:
+      labels:
+        app: insurance-api
+    spec:
+      containers:
+        - name: api
+          image: priteeagrawal2006/insurance-premium-api:latest
+          ports:
+            - containerPort: 8000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: insurance-api-svc
+  namespace: insurance
+spec:
+  selector:
+    app: insurance-api
+  type: NodePort
+  ports:
+    - port: 8000
+      targetPort: 8000
+      nodePort: 30080
